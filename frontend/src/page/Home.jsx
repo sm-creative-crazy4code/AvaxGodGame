@@ -1,13 +1,43 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { PageHOC,CustomInput,CustomButton } from '../components';
+import { useGlobalContext } from '../context';
+import { useSearchParams } from 'react-router-dom';
 
 const Home = () => {
+
+  const {contract ,walletAddress}= useGlobalContext()
+  const [player,setPlayer] = useState("")
+
+  const handleClick = async() => {
+    try {
+      const playerExists = await contract.isPlayer(walletAddress);
+      if (!playerExists) {await contract.registerPlayer(player);}
+      
+    } catch (error) {
+      alert(error)
+    }
+
+  }
   return (
-    <div>
-      <h1 className="text-5xl p-3">Avax Gods</h1>
-      <h2 className="text-3xl p-3">Web3 NFT Battle-style Card Game</h2>
-      <p className="text-xl p-3">Made with 💜 by JavaScript Mastery</p>
+    <div className='flex flex-col'>
+     <CustomInput 
+       label="Name"
+       placeholder="Enter your player name"
+       value={player}
+       handleValueChange={setPlayer}
+     />
+
+     <CustomButton
+      title="Register"
+      handleClick={()=>{}}
+      restStyles="mt-6"
+     />
     </div>
   )
 };
 
-export default Home;
+export default PageHOC(
+  Home,
+  <>Welcome to AVAX Gods <br/> a Web3 NFT card game</>,
+  <> Connect your wallet to start playing the ultimate NFT card game</>
+  );
