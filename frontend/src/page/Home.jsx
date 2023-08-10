@@ -5,16 +5,28 @@ import { useSearchParams } from 'react-router-dom';
 
 const Home = () => {
 
-  const {contract ,walletAddress}= useGlobalContext()
+  const {contract ,walletAddress,setShowAlert}= useGlobalContext()
   const [player,setPlayer] = useState("")
+  
 
   const handleClick = async() => {
     try {
       const playerExists = await contract.isPlayer(walletAddress);
-      if (!playerExists) {await contract.registerPlayer(player);}
+           if (!playerExists) {await contract.registerPlayer(player,player,{ gasLimit: 500000 });
+      setShowAlert({
+        status:true,
+        type:"info",
+        message:`${player}  is being summoned`
+      })
+      
+      }
       
     } catch (error) {
-      alert(error)
+      setShowAlert({
+        status:true,
+        type:"failure",
+        message:"Oops! Something went wrong"
+      })
     }
 
   }
@@ -29,7 +41,7 @@ const Home = () => {
 
      <CustomButton
       title="Register"
-      handleClick={()=>{}}
+      handleClick={handleClick}
       restStyles="mt-6"
      />
     </div>
