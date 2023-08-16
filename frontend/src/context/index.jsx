@@ -10,6 +10,7 @@ import Web3Modal from "web3modal";
 import { useNavigate } from "react-router-dom";
 
 import { ABI, ADDRESS } from "../contract";
+import { createEventListener } from "./createEventListeners";
 
 const GlobalContext = createContext();
 
@@ -22,6 +23,14 @@ export const GlobalContextProvider = ({ children }) => {
     type: "info",
     message: "",
   });
+  const[battleName, setBattleName] = useState('')
+  const[gameData,setGameData] = useState({
+    players: [],
+    pendingBattles: [], 
+    activeBattle:null,
+  })
+
+const navigate = useNavigate();
 
   // sets the wallet address to the state
   const updateCurrentWalletAddress = async () => {
@@ -39,7 +48,10 @@ export const GlobalContextProvider = ({ children }) => {
     window?.ethereum?.on('accountsChanged', updateCurrentWalletAddress);
   }, []);
 
-  //sets and conneccts to the smart contract and sets the contract and provider to the state
+  
+  
+  
+  //sets and connects to the smart contract and sets the contract and provider to the state
   useEffect(() => {
     const setSmartContractProvider = async () => {
       const web3modal = new Web3Modal();
@@ -47,7 +59,7 @@ export const GlobalContextProvider = ({ children }) => {
       const newProvider = new ethers.providers.Web3Provider(connection);
       const signer = newProvider.getSigner();
      
-      const newContract = new ethers.Contract(ADDRESS, ABI, signer);
+      const newContract = new ethers.Contract(ADDRESS,ABI,signer);
       
       setProvider(newProvider);
       setContract(newContract);
@@ -57,10 +69,63 @@ export const GlobalContextProvider = ({ children }) => {
     setSmartContractProvider();
   },[]);
 
+
+  // 
+
+  useEffect(() => {
+  if(contract){
+    createEventListener({
+     navigate,
+     contract,
+     provider,
+     walletAddress,
+     setShowAlert,
+    
+
+    })
+  }
+
+
+  },[contract])
+
+
+// sets the game data to the state
+
+useEffect(() => {
+  const fetchGameData = async() =>{
+    const fetchedBattles= await contract.getAllBattles();
+    const pendingBattles = fetchedBattles.filter((battle)=>battle.battleStatus===0);
+    let activeBattle = null;
+
+    fetchedBattles.forEach((battle) => {
+      if(battle.player.find((player)=>player.toLowerCase()===walletAddress.toLowerCase())){
+        if(battle.winner.startsWith("0x00")){
+            activeBattle = battle
+        }
+      }
+    });
+
+    setGameData({
+      pendingBattles:pendingBattles.slice(1),activeBattle
+    })
+
+  }
+
+  fetchGameData()
+
+},[contract]) 
+
+
+
+
+
+
+
+
   // shows alert for 5 seconds and after 5 seconds clears the alert timers
 
   useEffect(() => {
-    if (showAlert.status) {
+    if (showAlert?.status) {
       const timer = setTimeout(() => {
         setShowAlert({
           status: false,
@@ -80,6 +145,10 @@ export const GlobalContextProvider = ({ children }) => {
         walletAddress,
         showAlert,
         setShowAlert,
+        battleName,
+        setBattleName,
+        gameData,
+        setGameData,
       }}
     >
       {children}
