@@ -14,7 +14,12 @@ const JoinBattle = () => {
       setBattleName(battleName)
 
       try {
-        await contract.joinBattle(battleName)
+        await contract.joinBattle(battleName);
+         setShowAlert({
+          status:true,
+          type:'success',
+          message:`Join ${battleName}...`
+         });
       } catch (error) {
         
       }
