@@ -7,6 +7,7 @@ import ActionButton from "./ActionButton";
 import PlayerInfo from "./PlayerInfo";
 import Card from "./Card";
 import GameInfo from "./GamEInfo";
+import Battleground from "./Battleground";
 export {
     PageHOC,
     CustomInput,
@@ -17,4 +18,5 @@ export {
     ActionButton,
     Card,
     GameInfo,
+    Battleground,
 }
