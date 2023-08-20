@@ -52,6 +52,17 @@ const navigate = useNavigate();
     window?.ethereum?.on('accountsChanged', updateCurrentWalletAddress);
   }, []);
 
+  // To set the battleground background form localstorage and prevent change from refreshing
+
+useEffect(() => {
+  const battlegroundFromLocalStorage =localStorage.getItem('battleground')
+  if(battlegroundFromLocalStorage){
+    setBattleGround(battlegroundFromLocalStorage)
+
+  }else{
+    localStorage.setItem('battleground',battleGround)
+  }
+},[])
   
   
   
