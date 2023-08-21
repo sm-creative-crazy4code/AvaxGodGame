@@ -11,6 +11,8 @@ import { useNavigate } from "react-router-dom";
 
 import { ABI, ADDRESS } from "../contract";
 import { createEventListener } from "./createEventListeners";
+import { GetParams } from "../utils/onboard";
+
 
 const GlobalContext = createContext();
 
@@ -33,6 +35,8 @@ export const GlobalContextProvider = ({ children }) => {
     pendingBattles: [], 
     activeBattle:null,
   })
+ const [step,setStep]= useState(1)
+
 
 const navigate = useNavigate();
 
@@ -88,7 +92,7 @@ useEffect(() => {
   // 
 
   useEffect(() => {
-  if(contract){
+  if(step!==-1 && contract){
     createEventListener({
      navigate,
      contract,
@@ -103,7 +107,7 @@ useEffect(() => {
   }
 
 
-  },[contract])
+  },[contract,step])
 
 
 // sets the game data to the state
@@ -132,6 +136,19 @@ if(contract) fetchGameData();
 
 },[contract,updateGameData]) 
 
+
+// Reset we3 onboarding modal params
+useEffect(()=>{
+const resetParams = async()=>{
+  const currentStep = await GetParams()
+  setStep(currentStep.step)
+}
+
+resetParams();
+window?.ethereum?.on('chainChanged',()=>resetParams());
+window?.ethereum?.on('accountsChanged',()=>resetParams());
+
+},[])
 
 
 

@@ -8,6 +8,7 @@ import PlayerInfo from "./PlayerInfo";
 import Card from "./Card";
 import GameInfo from "./GamEInfo";
 import Battleground from "./Battleground";
+import OnboardModal from "./OnboardModal";
 export {
     PageHOC,
     CustomInput,
@@ -19,4 +20,5 @@ export {
     Card,
     GameInfo,
     Battleground,
+    OnboardModal,
 }

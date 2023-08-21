@@ -53,4 +53,9 @@ export const createEventListener=({
 
    })
 
+   const BattleMoveEventFilter = contract.filters.BattleMove();
+   AddNewEvent(BattleMoveEventFilter,provider,({args})=>{
+    console.log("Battle Move initiaed",args)
+
+   })
 }
